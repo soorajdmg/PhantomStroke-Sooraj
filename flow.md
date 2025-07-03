@@ -4,7 +4,7 @@ flowchart LR
     subgraph Laptop_Transmitter
         A1[User types on keyboard]
         A2[Each keystroke triggers ultrasonic emission at MEMS resonance frequency]
-        A3[Emits ultrasonic wave (18–22 kHz)]
+        A3[Emits ultrasonic wave (18-22 kHz)]
     end
 
     %% Smartphone (Receiver)
