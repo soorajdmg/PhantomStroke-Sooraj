@@ -3,18 +3,18 @@ flowchart LR
     %% Laptop (Transmitter)
     subgraph Laptop_Transmitter
         A1[User types on keyboard]
-        A2[Each keystroke triggers ultrasonic emission at MEMS resonance frequency]
-        A3[Emits ultrasonic wave (18-22 kHz)]
+        A2[Keystroke triggers ultrasonic emission]
+        A3[Ultrasonic wave emitted at 18-22 kHz]
     end
 
     %% Smartphone (Receiver)
     subgraph Smartphone_Receiver
         B1[Malicious web page running]
-        B2[Has gyroscope access via JavaScript (Sensor API)]
-        B3[MEMS gyroscope picks up tiny internal oscillation]
-        B4[Gyroscope output distorted]
-        B5[Output read by JS page]
-        B6[Bitstream decoded from vibration pattern]
+        B2[Gyroscope access via JavaScript]
+        B3[Gyroscope detects vibration]
+        B4[Distorted data from gyroscope]
+        B5[JavaScript reads sensor output]
+        B6[Keystrokes decoded from vibration]
     end
 
     %% Flow connections
