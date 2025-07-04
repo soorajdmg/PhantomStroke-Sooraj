@@ -18,7 +18,7 @@ flowchart TD
     C2[Capture angular velocity X Y Z]
     C3[Buffer and segment time series data]
 
-%% Phase 4: Optional Server Use only
+%% Phase 4: Optional Server Use 
     D1{Send data to server or process locally}
     D2[Send to remote server - API key required]
     D3[Process locally with browser ML]
