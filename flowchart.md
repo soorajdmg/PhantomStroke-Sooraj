@@ -1,33 +1,34 @@
 ```mermaid
 flowchart TD
-    %% Phase 1: Attack Trigger
-    A1[User Types on Laptop Keyboard]
-    A2[Each Keystroke Triggers Ultrasonic Signal\n(18-22 kHz)]
-    A3[Ultrasonic Signal Emitted via Laptop Speaker]
 
-    %% Phase 2: Signal Reception on Phone
-    B1[Smartphone Nearby with Malicious Web Page Open]
-    B2[JavaScript Checks for Gyroscope API Support]
-    B3{Is 'Gyroscope' in window?}
-    B4[Use Generic Sensor API (High Precision)]
-    B5[Fallback to DeviceOrientationEvent (Low Precision)]
+%% Phase 1: Attack Trigger
+    A1[User types on laptop keyboard]
+    A2[Each keystroke triggers ultrasonic signal: 18-22 kHz]
+    A3[Ultrasonic signal emitted from laptop speaker]
 
-    %% Phase 3: Sensor Reading
-    C1[Gyroscope Reads Internal MEMS Vibrations]
-    C2[Time-Series X, Y, Z Angular Velocity Captured]
-    C3[Buffer & Segment Signal into Windows]
+%% Phase 2: Signal Reception on Phone
+    B1[Phone nearby with malicious web page open]
+    B2[JavaScript checks for gyroscope API support]
+    B3{Is Gyroscope API available?}
+    B4[Use Generic Sensor API (high precision)]
+    B5[Fallback to DeviceOrientationEvent (low precision)]
 
-    %% Phase 4: Optional Server Use
-    D1{Send Data to Server or Process Locally?}
-    D2[Send Buffered Data to Remote Server\n(Requires API Key)]
-    D3[Process Locally using ML In-Browser]
+%% Phase 3: Sensor Reading
+    C1[Gyroscope detects internal MEMS vibrations]
+    C2[Capture angular velocity on X Y Z axes]
+    C3[Buffer and segment time-series data]
 
-    %% Phase 5: ML Inference
-    E1[Feature Extraction (FFT, Axis Stats)]
-    E2[ML Model (e.g., CNN/SVM) Predicts Keystroke]
-    E3[Output Inferred Keystrokes]
+%% Phase 4: Optional Server Use
+    D1{Send data to server or process locally?}
+    D2[Send data to remote server (API key needed)]
+    D3[Process locally with in-browser ML]
 
-    %% Connections
+%% Phase 5: ML Inference
+    E1[Extract features: FFT, axis stats]
+    E2[ML model predicts keystroke]
+    E3[Inferred keystrokes output]
+
+%% Flow Connections
     A1 --> A2 --> A3 --> B1
     B1 --> B2 --> B3
     B3 -- Yes --> B4 --> C1
