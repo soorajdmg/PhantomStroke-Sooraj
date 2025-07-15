@@ -261,7 +261,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 GyroSnoop</h1>
+            <h1> GyroSnoop</h1>
             <p>Advanced Ultrasonic Side-Channel Keystroke Inference</p>
         </div>
 
@@ -323,8 +323,8 @@
             </div>
             
             <div class="log-area" id="logArea">
-                <div>📱 GyroSnoop Sensor Logger initialized...</div>
-                <div>🔧 Waiting for device motion permissions...</div>
+                <div> GyroSnoop Sensor Logger initialized...</div>
+                <div> Waiting for device motion permissions...</div>
             </div>
         </div>
     </div>
@@ -387,19 +387,19 @@
                         // iOS 13+ permission request
                         const permission = await DeviceMotionEvent.requestPermission();
                         if (permission === 'granted') {
-                            this.log('✅ Device motion permissions granted');
+                            this.log(' Device motion permissions granted');
                             this.updateStatus('Ready', false);
                         } else {
-                            this.log('❌ Device motion permissions denied');
+                            this.log(' Device motion permissions denied');
                             this.updateStatus('Permission Denied', false);
                         }
                     } else {
                         // Android and other browsers
-                        this.log('✅ Device motion available (no permission required)');
+                        this.log(' Device motion available (no permission required)');
                         this.updateStatus('Ready', false);
                     }
                 } catch (error) {
-                    this.log(`❌ Error requesting permissions: ${error.message}`);
+                    this.log(` Error requesting permissions: ${error.message}`);
                     this.updateStatus('Error', false);
                 }
             }
@@ -416,10 +416,10 @@
                 this.elements.stopBtn.disabled = false;
                 
                 this.updateStatus('Recording', true);
-                this.log(`🎬 Recording started - Session: ${this.elements.sessionId.value}`);
+                this.log(` Recording started - Session: ${this.elements.sessionId.value}`);
                 
                 if (this.elements.keyLabel.value) {
-                    this.log(`🔤 Current key label: ${this.elements.keyLabel.value}`);
+                    this.log(` Current key label: ${this.elements.keyLabel.value}`);
                 }
                 
                 // Start metrics update interval
@@ -435,7 +435,7 @@
                 this.elements.stopBtn.disabled = true;
                 
                 this.updateStatus('Stopped', false);
-                this.log(`⏹️ Recording stopped - ${this.sampleCount} samples collected`);
+                this.log(` Recording stopped - ${this.sampleCount} samples collected`);
                 
                 clearInterval(this.metricsInterval);
                 this.updateMetrics();
@@ -545,7 +545,7 @@
                 
                 this.updateMetrics();
                 this.updateStatus('Ready', false);
-                this.log('🗑️ Data cleared');
+                this.log('Data cleared');
                 
                 // Reset display values
                 this.elements.gyroX.textContent = '0.000';
