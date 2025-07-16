@@ -1,202 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GyroSnoop - Sensor Recorder</title>
+    <title>PhantomStroke</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #111111;
+            --card-bg: #1a1a1a;
+            --border-color: #333;
+            --neon-green: #00ff41;
+            --neon-blue: #00d9ff;
+            --neon-red: #ff073a;
+            --neon-purple: #bd00ff;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666;
+            --warning-bg: #2d1b00;
+            --warning-border: #ff8c00;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--primary-bg);
+            color: var(--text-primary);
             min-height: 100vh;
-            color: #333;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(189, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 217, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: pulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 0.8;
+            }
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            color: white;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5em;
+            font-weight: 900;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            /* animation: glow 2s ease-in-out infinite alternate; */
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(0, 255, 65, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.8));
+            }
+        }
+
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        
+        .version-badge {
+            display: inline-block;
+            background: var(--card-bg);
+            border: 1px solid var(--neon-green);
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .session-info {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+            position: relative;
+        }
+
+        .session-info::before {
+            content: 'SESSION CONFIG';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--primary-bg);
+            padding: 0 10px;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .session-field {
+            margin-bottom: 20px;
+        }
+
+        .session-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .session-field input {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .session-field input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
         }
 
         .status-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+            position: relative;
+        }
+
+        .status-panel::before {
+            content: 'CONTROL PANEL';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--primary-bg);
+            padding: 0 10px;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .controls {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 15px 25px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            color: white;
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            color: var(--primary-bg);
+            border: 1px solid var(--neon-green);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: linear-gradient(45deg, #f44336, #d32f2f);
+            background: linear-gradient(45deg, #ff073a, #cc0629);
             color: white;
+            border: 1px solid var(--neon-red);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 0 20px rgba(255, 7, 58, 0.4);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #2196F3, #1976D2);
-            color: white;
+            background: linear-gradient(45deg, #00d9ff, #0099cc);
+            color: var(--primary-bg);
+            border: 1px solid var(--neon-blue);
         }
 
-        .btn:hover {
+        .btn-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            box-shadow: none;
             transform: none;
         }
 
         .metrics {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
         }
 
         .metric-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .metric-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 5px;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 8px;
+            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .metric-label {
-            font-size: 0.9em;
-            color: #666;
+            font-size: 0.85em;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
 
         .data-display {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.1);
+            position: relative;
+        }
+
+        .data-display::before {
+            content: 'SENSOR DATA STREAM';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--primary-bg);
+            padding: 0 10px;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .gyro-data {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .axis-data {
             text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 20px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
         .axis-label {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9em;
         }
 
         .axis-value {
-            font-size: 1.5em;
-            font-family: 'Courier New', monospace;
-            color: #333;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 8px;
+            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .log-area {
-            background: #1e1e1e;
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .session-info {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
+            background: var(--primary-bg);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            position: relative;
         }
 
-        .session-field {
-            margin-bottom: 15px;
+        .log-area::before {
+            content: '> SYSTEM LOG';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--primary-bg);
+            padding: 0 10px;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            font-weight: 600;
         }
 
-        .session-field label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #667eea;
+        .log-area::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .session-field input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
+        .log-area::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
         }
 
-        .session-field input:focus {
-            outline: none;
-            border-color: #667eea;
+        .log-area::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 4px;
         }
 
         .status-indicator {
@@ -204,69 +418,108 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 10px;
+            box-shadow: 0 0 10px;
         }
 
         .status-online {
-            background: #4CAF50;
-            animation: pulse 2s infinite;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse-green 2s infinite;
         }
 
         .status-offline {
-            background: #f44336;
+            background: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red);
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulse-green {
+            0% {
+                opacity: 1;
+            }
 
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         .permission-warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 15px;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
-            color: #856404;
+            color: #ff8c00;
+            font-weight: 500;
         }
 
+        /* Responsive design */
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
-            
+
             .header h1 {
-                font-size: 2em;
+                font-size: 2.5em;
             }
-            
+
             .controls {
                 grid-template-columns: 1fr;
             }
-            
+
             .gyro-data {
                 grid-template-columns: 1fr;
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Terminal-style blinking cursor */
+        .cursor::after {
+            content: '█';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <h1> GyroSnoop</h1>
-            <p>Advanced Ultrasonic Side-Channel Keystroke Inference</p>
+            <h1>PHANTOMSTROKE</h1>
+            <p class="subtitle">Ultrasonic Side-Channel Keystroke Inference</p>
+            <div class="version-badge">v1.0.0</div>
         </div>
 
         <div class="session-info">
-            <h3>Session Configuration</h3>
             <div class="session-field">
                 <label for="sessionId">Session ID:</label>
                 <input type="text" id="sessionId" placeholder="Enter session identifier">
@@ -284,7 +537,7 @@
                 <button class="btn btn-secondary" id="downloadBtn">Download CSV</button>
                 <button class="btn btn-secondary" id="clearBtn">Clear Data</button>
             </div>
-            
+
             <div class="metrics">
                 <div class="metric-card">
                     <div class="metric-value" id="sampleCount">0</div>
@@ -306,7 +559,6 @@
         </div>
 
         <div class="data-display">
-            <h3>Real-time Gyroscope Data</h3>
             <div class="gyro-data">
                 <div class="axis-data">
                     <div class="axis-label">X-Axis (rad/s)</div>
@@ -321,10 +573,10 @@
                     <div class="axis-value" id="gyroZ">0.000</div>
                 </div>
             </div>
-            
+
             <div class="log-area" id="logArea">
-                <div> GyroSnoop Sensor Logger initialized...</div>
-                <div> Waiting for device motion permissions...</div>
+                <div>> PhantomStroke Sensor Logger initialized...</div>
+                <div>> Waiting for device motion permissions...</div>
             </div>
         </div>
     </div>
@@ -337,7 +589,7 @@
                 this.startTime = null;
                 this.sampleCount = 0;
                 this.lastTimestamp = 0;
-                
+
                 this.elements = {
                     startBtn: document.getElementById('startBtn'),
                     stopBtn: document.getElementById('stopBtn'),
@@ -355,105 +607,105 @@
                     gyroZ: document.getElementById('gyroZ'),
                     logArea: document.getElementById('logArea')
                 };
-                
+
                 this.init();
             }
-            
+
             init() {
                 this.setupEventListeners();
                 this.requestPermissions();
                 this.generateSessionId();
                 this.updateStatus('Ready', false);
             }
-            
+
             setupEventListeners() {
                 this.elements.startBtn.addEventListener('click', () => this.startRecording());
                 this.elements.stopBtn.addEventListener('click', () => this.stopRecording());
                 this.elements.downloadBtn.addEventListener('click', () => this.downloadCSV());
                 this.elements.clearBtn.addEventListener('click', () => this.clearData());
-                
+
                 // Handle device motion events
                 window.addEventListener('devicemotion', (event) => this.handleDeviceMotion(event));
             }
-            
+
             generateSessionId() {
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                this.elements.sessionId.value = `gyrosnoop_${timestamp}`;
+                this.elements.sessionId.value = `phantomstroke_${timestamp}`;
             }
-            
+
             async requestPermissions() {
                 try {
                     if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                         // iOS 13+ permission request
                         const permission = await DeviceMotionEvent.requestPermission();
                         if (permission === 'granted') {
-                            this.log(' Device motion permissions granted');
+                            this.log('> Device motion permissions granted');
                             this.updateStatus('Ready', false);
                         } else {
-                            this.log(' Device motion permissions denied');
+                            this.log('> Device motion permissions denied');
                             this.updateStatus('Permission Denied', false);
                         }
                     } else {
                         // Android and other browsers
-                        this.log(' Device motion available (no permission required)');
+                        this.log('> Device motion available (no permission required)');
                         this.updateStatus('Ready', false);
                     }
                 } catch (error) {
-                    this.log(` Error requesting permissions: ${error.message}`);
+                    this.log(`> Error requesting permissions: ${error.message}`);
                     this.updateStatus('Error', false);
                 }
             }
-            
+
             startRecording() {
                 if (this.isRecording) return;
-                
+
                 this.isRecording = true;
                 this.startTime = Date.now();
                 this.sampleCount = 0;
                 this.gyroData = [];
-                
+
                 this.elements.startBtn.disabled = true;
                 this.elements.stopBtn.disabled = false;
-                
+
                 this.updateStatus('Recording', true);
-                this.log(` Recording started - Session: ${this.elements.sessionId.value}`);
-                
+                this.log(`> Recording started - Session: ${this.elements.sessionId.value}`);
+
                 if (this.elements.keyLabel.value) {
-                    this.log(` Current key label: ${this.elements.keyLabel.value}`);
+                    this.log(`> Current key label: ${this.elements.keyLabel.value}`);
                 }
-                
+
                 // Start metrics update interval
                 this.metricsInterval = setInterval(() => this.updateMetrics(), 100);
             }
-            
+
             stopRecording() {
                 if (!this.isRecording) return;
-                
+
                 this.isRecording = false;
-                
+
                 this.elements.startBtn.disabled = false;
                 this.elements.stopBtn.disabled = true;
-                
+
                 this.updateStatus('Stopped', false);
-                this.log(` Recording stopped - ${this.sampleCount} samples collected`);
-                
+                this.log(`> Recording stopped - ${this.sampleCount} samples collected`);
+
                 clearInterval(this.metricsInterval);
                 this.updateMetrics();
             }
-            
+
             handleDeviceMotion(event) {
                 const timestamp = Date.now();
-                
+
                 if (event.rotationRate) {
                     const gyroX = event.rotationRate.alpha || 0;
                     const gyroY = event.rotationRate.beta || 0;
                     const gyroZ = event.rotationRate.gamma || 0;
-                    
+
                     // Update real-time display
                     this.elements.gyroX.textContent = gyroX.toFixed(6);
                     this.elements.gyroY.textContent = gyroY.toFixed(6);
                     this.elements.gyroZ.textContent = gyroZ.toFixed(6);
-                    
+
                     // Record data if recording is active
                     if (this.isRecording) {
                         const dataPoint = {
@@ -467,37 +719,37 @@
                             magnitude: Math.sqrt(gyroX * gyroX + gyroY * gyroY + gyroZ * gyroZ),
                             deltaTime: this.lastTimestamp ? timestamp - this.lastTimestamp : 0
                         };
-                        
+
                         this.gyroData.push(dataPoint);
                         this.sampleCount++;
                         this.lastTimestamp = timestamp;
                     }
                 }
             }
-            
+
             updateMetrics() {
                 this.elements.sampleCount.textContent = this.sampleCount.toLocaleString();
-                
+
                 if (this.startTime) {
                     const duration = (Date.now() - this.startTime) / 1000;
                     this.elements.duration.textContent = `${duration.toFixed(1)}s`;
-                    
+
                     const frequency = this.sampleCount / duration;
                     this.elements.frequency.textContent = `${frequency.toFixed(1)} Hz`;
                 }
             }
-            
+
             updateStatus(text, isOnline) {
                 this.elements.statusText.textContent = text;
                 this.elements.statusLight.className = `status-indicator ${isOnline ? 'status-online' : 'status-offline'}`;
             }
-            
+
             downloadCSV() {
                 if (this.gyroData.length === 0) {
                     alert('No data to download. Please record some data first.');
                     return;
                 }
-                
+
                 const headers = [
                     'timestamp',
                     'relativeTime',
@@ -509,50 +761,50 @@
                     'magnitude',
                     'deltaTime'
                 ];
-                
+
                 let csvContent = headers.join(',') + '\n';
-                
+
                 this.gyroData.forEach(row => {
                     const values = headers.map(header => row[header]);
                     csvContent += values.join(',') + '\n';
                 });
-                
+
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
-                
+
                 link.setAttribute('href', url);
                 link.setAttribute('download', `${this.elements.sessionId.value}_gyrodata.csv`);
                 link.style.visibility = 'hidden';
-                
+
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
-                this.log(`📥 CSV downloaded: ${this.elements.sessionId.value}_gyrodata.csv`);
+
+                this.log(`> CSV downloaded: ${this.elements.sessionId.value}_gyrodata.csv`);
             }
-            
+
             clearData() {
                 if (this.isRecording) {
                     alert('Cannot clear data while recording. Please stop recording first.');
                     return;
                 }
-                
+
                 this.gyroData = [];
                 this.sampleCount = 0;
                 this.startTime = null;
                 this.lastTimestamp = 0;
-                
+
                 this.updateMetrics();
                 this.updateStatus('Ready', false);
-                this.log('Data cleared');
-                
+                this.log('> Data cleared');
+
                 // Reset display values
                 this.elements.gyroX.textContent = '0.000';
                 this.elements.gyroY.textContent = '0.000';
                 this.elements.gyroZ.textContent = '0.000';
             }
-            
+
             log(message) {
                 const timestamp = new Date().toLocaleTimeString();
                 const logEntry = document.createElement('div');
@@ -561,12 +813,12 @@
                 this.elements.logArea.scrollTop = this.elements.logArea.scrollHeight;
             }
         }
-        
+
         // Initialize the recorder when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new GyroSnoopRecorder();
         });
-        
+
         // Handle page visibility changes
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -577,4 +829,5 @@
         });
     </script>
 </body>
+
 </html>
